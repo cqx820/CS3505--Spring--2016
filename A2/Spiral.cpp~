@@ -1,0 +1,50 @@
+
+#define _USE_MATH_DEFINES
+#include <cmath>
+#include "Spiral.h"
+
+Spiral::Spiral(double _centerX, double _centerY, double _start_angle, double _start_radius)
+{
+    centerX = _centerX;
+    centerY = _centerY;
+    start_angle = _start_angle;
+    start_radius = _start_radius;
+}
+
+Sprial& Spiral::operator++()
+{
+    return *this;
+}
+
+Spiral Spiral::operator(int)
+{
+    Sprial temp = *this;
+    ++*this;
+    return temp;
+}
+
+ostream& operator<<(ostream& output, Spiral sp)
+{
+    output << "(" << sp.centerX << ", " << sp.centerY << ")\n";
+    return output;
+}
+
+double Sprial::get_text_x()
+{
+
+}
+
+double Spiral::get_text_y()
+{
+
+}
+
+double Spiral::get_spiral_angle()
+{
+
+}
+
+double Spiral::get_text_angle()
+{
+
+}

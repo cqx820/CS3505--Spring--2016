@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="E.wav">ESound.wav</file>
+        <file alias="G.wav">GSound.wav</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,74 @@
+#include "../include/hpdf.h"
+#include "HaruPDF.h"
+#include <cstring>
+#include <iostream>
+#include <sstream>
+using namespace std;
+
+HaruPDF::HaruPDF(HPDF_Doc _pdf, HPDF_Font _font)
+{
+    pdf = _pdf;
+    page = ::HPDF_AddPage(pdf);
+    font = _font;
+}
+
+void HaruPDF::setFont(const char* font_name, const char* encoding_name)
+{
+    font = ::HPDF_GetFont(pdf, font_name, encoding_name);
+}
+
+void HaruPDF::setFileName(char _fname[])
+{
+    strcpy(fname, _fname);
+    strcat(fname, ".pdf");
+}
+
+void HaruPDF::HPDF_Page_SetSize(HPDF_PageSizes size, HPDF_PageDorection direction)
+{
+    ::HPDF_Page_SetSize(page, size, direction);
+}
+
+void HaruPDF::HPDF_Page_SetTextLeading(HPDF_REAL value)
+{
+    ::HPDF_Page_SetTextLeading(page, value);
+}
+
+void HaruPDF::HPDF_Page_SetGrayStroke(HPDF_REAL gray)
+{
+    ::HPDF_Page_SetGrayStroke(page, gray);
+}
+
+void HaruPDF::HPDF_Page_BeginText();
+{
+    ::HaruPDF_Page_BeginText(page);
+}
+
+void HaruPDF::HPDF_Page_SetFontAndSize(HPDF_REAL size)
+{
+    ::HaruPDF_Page_SetFontAndSize(page, font, size);
+}
+
+void HaruPDF::HPDF_Page_SetTextMatrix(HPDF_REAL a, HPDF_REAL b, HPDF_REAL c, HPDF_REAL d, HPDF_REAL x, HPDF_REAL y)
+{
+    ::HaruPDF_Page_SetTextMatrix(page, a, b, c, d, x, y);
+}
+
+void HaruPDF::HPDF_Page_EndText()
+{
+    ::HaruPDF_Page_EndText(page);
+}
+
+void HaruPDF::HPDF_Page_ShowText(const char* text)
+{
+    ::HaruPDF_Page_ShowText(page, text);
+}
+
+void HaruPDF:: HPDF_SaveToFile()
+{
+    ::HaryPDF_SaveToFile(pdf, fname);
+}
+
+void HaruPDF::HPDF_Free()
+{
+    ::HPDF_Free(pdf);
+}

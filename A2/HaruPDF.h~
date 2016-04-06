@@ -1,0 +1,25 @@
+#include "../include/hpdf.h"
+#include <iostream>
+using namespace std;
+class HaruPDF
+{
+    HPDF_Doc pdf;
+    HPDF_Page page;
+    HPDF_Font font;
+    char fname[256]; // char *fname;
+
+public:
+    HaruPDF(HPDF_Doc _pdf, HPDF_Font _font);
+    void setFont(const char *font_name, const char *encoding_name);
+    void setFileName(char _fname[]);
+    void HPDF_Page_SetSize(HPDF_PageSizes size, HPDF_PageDirection direction);
+    void HPDF_Page_SetTextLeading(HPDF_REAL value);
+    void HPDF_Page_SetGrayStroke(HPDF_REAL gray);
+    void HPDF_Page_BeginText();
+    void HPDF_Page_SetFontAndSize(HPDF_REAL size);
+    void HPDF_Page_SetTextMatrix(HPDF_REAL a, HPDF_REAL b, HPDF_REAL c, HPDF_REAL d, HPDF_REAL x, HPDF_REAL y);
+    void HPDF_Page_EndText();
+    void HPDF_Page_ShowText(const char *text);
+    void HPDF_SaveToFile();
+    void HPDF_Free();
+};
