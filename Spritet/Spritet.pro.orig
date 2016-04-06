@@ -1,0 +1,48 @@
+#-------------------------------------------------
+#
+# Project created by QtCreator 2016-03-06T19:18:59
+#
+#-------------------------------------------------
+
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+TARGET = Spritet
+TEMPLATE = app
+
+CONFIG += c++11
+QMAKE_CXXFLAGS+= -std=c++11
+QMAKE_LFLAGS +=  -std=c++11
+
+INCLUDEPATH += include tool/include
+
+CLASS = spritetgui modtroller drawingcanvas toolbox framepanel tool toolbutton
+#SRC =
+INC = define
+
+<<<<<<< .merge_file_8QXqUC
+RESOURCES = resources/icons.qrc
+
+TOOLS = pencil
+=======
+TOOLS = pencil eraser line
+>>>>>>> .merge_file_n9l3SU
+
+for(i, CLASS) {
+	SOURCES += src/$${i}.cpp
+	HEADERS += include/$${i}.h
+}
+
+for(i, SRC) {
+	SOURCES += src/$${i}.cpp
+}
+
+for(i, INC) {
+	HEADERS += include/$${i}.h
+}
+
+for(i, TOOLS) {
+	SOURCES += tool/src/$${i}.cpp
+	HEADERS += tool/include/$${i}.h
+}

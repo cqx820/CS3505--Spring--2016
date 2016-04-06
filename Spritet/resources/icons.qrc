@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="cross-icon">icons/cross.png</file>
+        <file alias="delete-icon">icons/delete.png</file>
+        <file alias="eyedropper-icon">icons/eyedropper.png</file>
+        <file alias="Line-icon">icons/line.png</file>
+        <file alias="Mirror-icon">icons/mirror.png</file>
+        <file alias="palette-icon">icons/palette.png</file>
+        <file alias="Pencil-icon">icons/pencil.png</file>
+        <file alias="photo-icon">icons/photo.png</file>
+        <file alias="splitHorizontal-icon">icons/splitHorizontal.png</file>
+        <file alias="splitVertical-icon">icons/splitVertical.png</file>
+        <file alias="switchArrow-icon">icons/switchArrow.png</file>
+        <file alias="Box-icon">icons/box.png</file>
+        <file alias="Fill-icon">icons/fill.png</file>
+        <file alias="LightenDarken-icon">icons/lightenDarken.png</file>
+        <file alias="Selection-icon">icons/selection.png</file>
+        <file alias="Eraser-icon">icons/erase.png</file>
+        <file alias="Replacer-icon">icons/replacer.png</file>
+    </qresource>
+</RCC>
