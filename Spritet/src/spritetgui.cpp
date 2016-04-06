@@ -32,15 +32,19 @@ SpritetGUI::SpritetGUI(QWidget *parent) : QMainWindow(parent) {
 
     toolbox = new ToolBox(this);
     framepanel = new FramePanel();
-    connect(this, &SpritetGUI::addFrame, framepanel, &FramePanel::addFrame);
+
+    connect(this, &SpritetGUI::frameRemoved, framepanel,
+            &FramePanel::removeFrame);
+    connect(this, &SpritetGUI::addFrame, framepanel
+            , &FramePanel::addFrame);
     connect(this, &SpritetGUI::updateFrameList, frames[0],
             &FrameContainer::updateFrameList);
     connect(this, &SpritetGUI::frameSizeSet, framepanel,
             &FramePanel::frameSizeSetted);
     connect(framepanel, &FramePanel::addFrameToGUI, this,
             &SpritetGUI::newFrame);
-    connect(framepanel, &FramePanel::removeFrameSignal, this,
-            &SpritetGUI::removeFrameFromGUI);
+    connect(framepanel, &FramePanel::removeFrameRequest, this,
+            &SpritetGUI::removeFrameRequest);
     connect(framepanel, &FramePanel::moveDownFrameSignal, this,
             &SpritetGUI::moveFrameDown);
     connect(framepanel, &FramePanel::moveUpFrameSignal, this,
@@ -199,7 +203,8 @@ void SpritetGUI::addNewFrameToGUI(DrawingCanvas *frame) {
 }
 
 void SpritetGUI::removeFrameFromGUI(DrawingCanvas *frame) {
-    emit removeFrameSignal(frame);
+    qDebug()<<"SpritedGUI frameRemoved"<<frame;
+    emit frameRemoved(frame);
 }
 
 void SpritetGUI::hideToolbox() {

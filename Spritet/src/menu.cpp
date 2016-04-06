@@ -67,7 +67,7 @@ Menu::Menu(SpritetGUI *parent) : QObject(parent) {
               "Help for individual tools is provided through the tool button\n"
               "       tooltips and status bar messages.\n\n"
               "Other features include: Multiple Canvases, Frame Management\n"
-              "       with preview, and a Hotkey system.\n"
+              "       with preview, and a Hotkey system.\n\n"
               "Press n on the canvas to split it. There can be up to four\n"
               "canvases at once\n"
               "To assign a hotkey, click on a tool then click on a button in\n"

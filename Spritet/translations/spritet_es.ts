@@ -6,11 +6,8 @@
     <message>
         <location filename="../src/colorswitcher.cpp" line="106"/>
         <source>Spritet Color Choser</source>
-<<<<<<< HEAD
         <translation type="unfinished"></translation>
-=======
         <translation>Escogedor de color de Spritet</translation>
->>>>>>> spanish
     </message>
 </context>
 <context>

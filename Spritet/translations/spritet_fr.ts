@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.1" language="fr_FR">
+<TS version="2.0" language="fr_FR">
 <context>
     <name>ColorSwitcher</name>
     <message>
@@ -10,64 +10,87 @@
     </message>
 </context>
 <context>
+    <name>DrawingFrame</name>
+    <message>
+        <location filename="../src/drawingframe.cpp" line="49"/>
+        <source>Select Frame</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>Menu</name>
     <message>
-        <location filename="../src/menu.cpp" line="17"/>
+        <location filename="../src/menu.cpp" line="23"/>
         <source>&amp;File</source>
         <translation>&amp;Fichier</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="19"/>
+        <location filename="../src/menu.cpp" line="25"/>
         <source>&amp;New</source>
         <translation>&amp;Nouveau</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="22"/>
+        <location filename="../src/menu.cpp" line="28"/>
         <source>&amp;Open</source>
         <translation>&amp;Ouvrez</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="27"/>
+        <location filename="../src/menu.cpp" line="33"/>
         <source>&amp;Save</source>
         <translation>E&amp;nregistrez</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="32"/>
+        <location filename="../src/menu.cpp" line="38"/>
         <source>Save &amp;As</source>
         <translation>En&amp;registrez sous</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="38"/>
+        <location filename="../src/menu.cpp" line="44"/>
         <source>&amp;Export</source>
         <translation>&amp;Exportez</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="43"/>
+        <location filename="../src/menu.cpp" line="49"/>
         <source>E&amp;xit</source>
         <translation>&amp;Sortie</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="45"/>
+        <location filename="../src/menu.cpp" line="51"/>
         <source>Close Spritet</source>
         <translation>Fermez Spritet</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="54"/>
+        <location filename="../src/menu.cpp" line="64"/>
+        <source>Spritet
+
+Tools: Pencil, Line, Box, Fill, Mirror, Eraser, Color Picker,
+       Selection, lighten/darken, Color Replace.
+Help for individual tools is provided through the tool button
+       tooltips and status bar messages.
+
+Other features include: Multiple Canvases, Frame Management
+       with preview, and a Hotkey system.
+
+Press n on the canvas to split it. There can be up to four
+canvases at once
+To assign a hotkey, click on a tool then click on a button in
+the top bar. The button will show the number key assigned.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
         <source>&amp;Window</source>
-        <translation>Fenê&amp;tre</translation>
+        <translation type="obsolete">Fenê&amp;tre</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="56"/>
         <source>ToolBox</source>
-        <translation>Boîte à Outils</translation>
+        <translation type="obsolete">Boîte à Outils</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="73"/>
+        <location filename="../src/menu.cpp" line="60"/>
         <source>&amp;Help</source>
         <translation>&amp;Aide</translation>
     </message>
     <message>
-        <location filename="../src/menu.cpp" line="77"/>
         <source>Spritet
 
 Tools: Pencil, Line, Box, Fill, Mirror, Eraser, Color Picker,
@@ -77,7 +100,7 @@ Help for individual tools is provided through the tool button
 
 Other features include: Multiple Canvases, Frame Management
        with preview, and a Hotkey system.</source>
-        <translation>Spritet
+        <translation type="obsolete">Spritet
 
 Outils: Crayon, Ligne, Boîte, Remplisseur, Miroir, Gomme, Sélecteur de Couleurs,
        Sélecteur, Éclaircir/Assombrir, Remplaceur de Couleur.
@@ -90,53 +113,53 @@ Autres fonctionnalités comprennent: Toiles Multiples, Contrôle des Cadres avec
 <context>
     <name>SpritetGUI</name>
     <message>
-        <location filename="../src/spritetgui.cpp" line="59"/>
+        <location filename="../src/spritetgui.cpp" line="62"/>
         <source>Ready!</source>
         <translation>Prêt!</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="172"/>
-        <location filename="../src/spritetgui.cpp" line="175"/>
+        <location filename="../src/spritetgui.cpp" line="177"/>
+        <location filename="../src/spritetgui.cpp" line="180"/>
         <source>Get Frame Dimensions</source>
         <translation>Obtenez les Dimensions du Cadre</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="173"/>
+        <location filename="../src/spritetgui.cpp" line="178"/>
         <source>Width (px):</source>
         <translation>Largeur (px):</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="176"/>
+        <location filename="../src/spritetgui.cpp" line="181"/>
         <source>Height (px):</source>
         <translation>Hauteur (px):</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="204"/>
+        <location filename="../src/spritetgui.cpp" line="210"/>
         <source>Save File</source>
         <translation>Engregistrez Document</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="204"/>
+        <location filename="../src/spritetgui.cpp" line="212"/>
         <source>All (*.*)</source>
         <translation>Tous (*.*)</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="214"/>
+        <location filename="../src/spritetgui.cpp" line="222"/>
         <source>Open File</source>
         <translation>Ouvrez Document</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="214"/>
+        <location filename="../src/spritetgui.cpp" line="224"/>
         <source>All Files (*.*);;Ssp Files(*.ssp)</source>
         <translation>Tous Documents (*.*);;Documents Ssp (*.ssp)</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="231"/>
+        <location filename="../src/spritetgui.cpp" line="241"/>
         <source>Export Gif</source>
         <translation>Exportez Gif</translation>
     </message>
     <message>
-        <location filename="../src/spritetgui.cpp" line="231"/>
+        <location filename="../src/spritetgui.cpp" line="243"/>
         <source>All Files (*.*);;Gif Files(*.gif)</source>
         <translation>Tous Documents (*.*);;Documents Gif (*.gif)</translation>
     </message>
@@ -144,7 +167,7 @@ Autres fonctionnalités comprennent: Toiles Multiples, Contrôle des Cadres avec
 <context>
     <name>Tool</name>
     <message>
-        <location filename="../tool/src/colourreplacer.cpp" line="10"/>
+        <location filename="../tool/src/colourreplacer.cpp" line="11"/>
         <source>Replacer</source>
         <translation>Remplaceur</translation>
     </message>
@@ -185,7 +208,7 @@ Autres fonctionnalités comprennent: Toiles Multiples, Contrôle des Cadres avec
         <translation>Éclaircir/Assombrir</translation>
     </message>
     <message>
-        <location filename="../tool/src/mirror.cpp" line="13"/>
+        <location filename="../tool/src/mirror.cpp" line="12"/>
         <source>Mirror Pencil</source>
         <translation>Crayon à Miroir</translation>
     </message>
@@ -193,7 +216,7 @@ Autres fonctionnalités comprennent: Toiles Multiples, Contrôle des Cadres avec
 <context>
     <name>ToolBox</name>
     <message>
-        <location filename="../src/toolbox.cpp" line="49"/>
+        <location filename="../src/toolbox.cpp" line="48"/>
         <source>Pen size:</source>
         <translation>Dimension du crayon:</translation>
     </message>

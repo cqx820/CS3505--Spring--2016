@@ -46,7 +46,7 @@ void DrawingFrame::updateFrameList(std::vector<DrawingCanvas *> *frameList) {
 
     qDebug() << "foo: " << frameList->size();
 
-    frames->addItem(("Select Frame"));
+    frames->addItem(tr("Select Frame"));
 
     for (size_t i = 1; i <= frameList->size(); i++) {
         frames->addItem("Frame " + QString::number(i));

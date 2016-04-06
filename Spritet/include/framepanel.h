@@ -36,7 +36,7 @@ signals:
     void addFrameToGUI(int num);
 
     //Signal events to Controller and Preview
-    void removeFrameSignal(DrawingCanvas *);
+    void removeFrameRequest(DrawingCanvas *);
 
     void moveUpFrameSignal(DrawingCanvas *);
 
@@ -50,6 +50,8 @@ signals:
     void addFrameSignalToPreview(DrawingCanvas *, int num);
 
     void frameSizeSetted(size_t x, size_t y);
+
+    void removeFrameSignal(DrawingCanvas*);
 
 public slots:
 

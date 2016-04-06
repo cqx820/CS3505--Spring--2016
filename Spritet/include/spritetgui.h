@@ -70,6 +70,8 @@ public slots:
 
 signals:
 
+    void removeFrameRequest(DrawingCanvas*);
+
     void switchColorsButtonClicked();
 
     void keyPressed(QKeyEvent *);
@@ -78,7 +80,7 @@ signals:
 
     void addFrameRequest(int);
 
-    void removeFrameSignal(DrawingCanvas *);
+    void frameRemoved(DrawingCanvas *);
 
     void moveFrameUp(DrawingCanvas *);
 

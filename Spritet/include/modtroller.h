@@ -95,6 +95,8 @@ signals:
 
     void updateFrameList(std::vector<DrawingCanvas *> *);
 
+    void frameRemoved(DrawingCanvas*);
+
 private:
     QApplication *spritet;
     SpritetGUI *view;

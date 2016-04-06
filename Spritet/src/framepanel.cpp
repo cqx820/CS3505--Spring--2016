@@ -60,7 +60,7 @@ FramePanel::FramePanel(QWidget *parent) :
     });
     connect(removeButton, &QPushButton::clicked, [&]() {
         if (thumbnailList->currentRow() != -1) {
-            emit removeFrame(canvasList[thumbnailList->currentRow()]);
+            emit removeFrameRequest(canvasList[thumbnailList->currentRow()]);
         }
     });
     layout->addWidget(animationPreview);
@@ -116,10 +116,8 @@ void FramePanel::addFrame(DrawingCanvas *frame) {
 //Slot that removes elements from the framepanel upon signal and alerts the controller
 void FramePanel::removeFrame(DrawingCanvas *frame) {
     int row = thumbnailList->currentRow();
-    if (row == -1) {
-        return;
-    }
     emit removeFrameSignal(frame);
+    qDebug()<<"FramePanel remove Frame "<<frame;
     QListWidgetItem *item = canvasThumbnailMap[frame];
     QWidget *widget = thumbnailList->itemWidget(item);
     thumbnailList->takeItem(row);

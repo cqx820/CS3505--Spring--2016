@@ -45,6 +45,7 @@ ModTroller::~ModTroller() {
 }
 
 void ModTroller::saveToFile(QString filename) {
+
     QFile file(filename);
     if (!file.open(QIODevice::WriteOnly)) {
         qDebug() << Q_FUNC_INFO << "not right type";
@@ -78,6 +79,11 @@ void ModTroller::saveToFile(QString filename) {
 
 
 void ModTroller::loadFromFile(QString filename) {
+
+    for (auto frame : frames) {
+        removeFrame(frame);
+    }
+
     QFile file(filename);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << Q_FUNC_INFO << "not right type";
@@ -216,6 +222,12 @@ int ModTroller::initView(int argc, char *argv[]) {
 
     view = new SpritetGUI;
     view->show();
+    connect(view,&SpritetGUI::removeFrameRequest,
+            this,&ModTroller::removeFrame);
+
+    connect(this,&ModTroller::frameRemoved,view,
+            &SpritetGUI::removeFrameFromGUI);
+
     connect(view, &SpritetGUI::frameSizeSet,
             this, &ModTroller::setFrameSize);
 
@@ -236,9 +248,6 @@ int ModTroller::initView(int argc, char *argv[]) {
 
     connect(view, &SpritetGUI::addFrameRequest, this,
             &ModTroller::addNewFrame);
-
-    connect(view, &SpritetGUI::removeFrameSignal,
-            this, &ModTroller::removeFrame);
 
     connect(view, &SpritetGUI::moveFrameDown,
             this, &ModTroller::moveFrameDown);
@@ -333,6 +342,7 @@ void ModTroller::removeFrame(DrawingCanvas *frame) {
     frames.erase(std::remove(frames.begin(), frames.end(), frame),
                  frames.end());
     emit updateFrameList(&frames);
+    emit frameRemoved(frame);
 }
 
 void ModTroller::moveFrameUp(DrawingCanvas *frame) {

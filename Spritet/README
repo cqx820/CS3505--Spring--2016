@@ -1,0 +1,4 @@
+In order to make translations work, the translations folder must be in the directory where the executable is located. For simplicity, after building it is possible to move into the build directory and link the translations folder (ln -s ../A7/translations ./)
+Once the translations are in place, you can set the language of an individual terminal by running:
+export LANGUAGE="<languageCode>_<regionCode>"
+See the tutorial document for more information
