@@ -26,7 +26,7 @@ FrameContainer::FrameContainer(QWidget *parent) : QWidget(parent) {
             this, &FrameContainer::mouseReleased);*/
 
     frames.push_back(frame);
-
+    layout->setColumnStretch(0,1);
     layout->addWidget(frame, 0, 0, 1, 1);
 
     setLayout(layout);
@@ -65,9 +65,12 @@ void FrameContainer::addDrawingFrame(int row, int col, int rowSpan,
 void FrameContainer::addCanvasFrame() {
     switch (frames.size()) {
         case 1:
+            layout->setColumnStretch(1,1);
             addDrawingFrame(0, 1, 1, 1);
             break;
         case 2:
+            layout->setRowStretch(0,1);
+            layout->setRowStretch(1,1);
             addDrawingFrame(1, 0, 1, 1);
             break;
         case 3:

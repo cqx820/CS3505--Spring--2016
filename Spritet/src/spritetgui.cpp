@@ -188,6 +188,7 @@ void SpritetGUI::getFrameSize() {
             qDebug() << x << "set request sent" << y;
         }
     }
+    this->setFocus();
 
 }
 

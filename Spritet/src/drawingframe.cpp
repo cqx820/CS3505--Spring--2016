@@ -25,7 +25,7 @@ DrawingFrame::DrawingFrame(QWidget *parent) : QWidget(parent) {
     layout = new QVBoxLayout(this);
 
     layout->addWidget(frames);
-    //layout->addWidget(canvas);
+//    layout->addWidget(canvas);
 
     setLayout(layout);
 
@@ -63,12 +63,11 @@ void DrawingFrame::indexChanged(int n) {
         layout->removeWidget(canvas);
 
         canvas = canvases->at(n - 1);
+        layout->addWidget(canvas);
         canvas->fitInView(canvas->scene()->itemsBoundingRect(),
                           Qt::KeepAspectRatio);
         canvas->show();
-
-        layout->addWidget(canvas);
-        layout->update();
+//        layout->update();
 
         update();
     } else if (n == 0) {
