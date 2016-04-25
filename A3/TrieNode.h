@@ -13,11 +13,12 @@ using namespace std;
 class TrieNode
 {
     vector<TrieNode*> children;
-    bool is_word;
+    
 	char mContent;
 public:
     TrieNode();
 	~TrieNode();
+	bool is_word;
 	vector<TrieNode*> getChildren();
 	bool isWord();
 	void setWord(bool _is_word);

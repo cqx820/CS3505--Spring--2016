@@ -34,6 +34,11 @@ void Trie::copyConstructor(TrieNode* otherNode, TrieNode* thisNode)
 {
 	for(unsigned int i = 0; i < 26; i++)
 	{
+		if(otherNode->is_word == false)
+		{
+			otherNode->setWordMarker();
+		}
+			
 		if(otherNode->getChildren().at(i) != NULL)
 		{
 			thisNode->getChildren().at(i) = new TrieNode();
