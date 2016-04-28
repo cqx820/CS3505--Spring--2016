@@ -1,0 +1,50 @@
+client->server := <<
+server->client := >> 
+
+type("literal") # quotes mean send literal value
+#{type} # send type # number of times
+
+register:
+	<< Uint8("101") << std::string(nickname) << std::string(realname) 
+	                << std::string(email) << std::string(password)
+	>> Uint8("100") >> ( AWK | FAIL )
+
+login:
+	<< Uint8("102") << std::string(nickname) << std::string(password)
+	>> Uint8("100") >> ( AWK | FAIL )
+
+get-stories:
+	<< Uint8("201")
+	>> Uint8("200") >> Uint8(# of stories) >> #{std::string(#storyname)}
+
+get-story:
+	<< Uint8("202") << std::string(storyname)
+	>> Uint8("200") >> std::string(storycontent)
+
+report-story:
+	<< Uint8("203") << std::string(storyname) << std::string(username) 
+	                << Uint32(time started) << Uint32(time elapsed)
+	                << Uint8(% completed) << Uint8(speed difficulty)
+	>> Uint8("100") >> ( AWK | FAIL )
+
+get-leaderboard:
+	<< Uint8("301")
+	>> Uint8("300") >> Uint8(# top <= 10 players) 
+	                >> #{std::string(#nickname) >> Uint32(#played) 
+                       >> Uint32(#wins) >> Uint8(#average)}
+
+
+AWK: Uint8("1")
+FAIL: Uint8("2")
+
+type:
+	100 >> login response
+	101 << register request
+	102 << login request
+
+	200 >> story response
+	201 << get story list request
+	202 << get story content request
+
+	300 >> leaderboard response
+	301 << leaderboard request

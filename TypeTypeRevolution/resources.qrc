@@ -1,0 +1,11 @@
+<RCC>
+    <qresource prefix="/">
+        <file alias="crate-texture">Resources/crate-front.png</file>
+        <file alias="font">Resources/LiberationSans-Regular.ttf</file>
+        <file alias="arial-mac">Resources/Arial Bold.ttf</file>
+        <file alias="ocean-texture">Resources/blue-309761_1280.png</file>
+        <file alias="ship-texture">Resources/Profile-Starboard.png</file>
+        <file alias="this_ship">Resources/LargeFullRiggedShip.jpg</file>
+        <file alias="crate-texture-highlighted">Resources/crate-front-highlight.png</file>
+    </qresource>
+</RCC>
