@@ -2,7 +2,8 @@
 #include "typetypeprotocol.h"
 
 #include <mysql/mysql.h>
-
+#include <stdio.h>
+#include <stdlib.h>
 #include <iostream>
 
 TypeTypeDB::TypeTypeDB() {
@@ -79,4 +80,33 @@ server_stories TypeTypeDB::db_stories() {
 
 	return stories;
 
+}
+
+bool TypeTypeDB::db_report(client_report proto) {
+	std::string query = "insert into game (material, user, started, elapsed, completed, speed) values ('" + proto.story + "','" + proto.user + "','" + std::to_string((int)proto.started) + "','" + std::to_string((int)proto.elapsed) + "','" + std::to_string((int)proto.completed) + "','" + std::to_string((int)proto.difficulty) + "');";
+	std::cout << "query: " << query << std::endl;
+	if (!mysql_query(&mysql, query.c_str()))
+		return false;
+
+	return true;
+}
+
+std::string TypeTypeDB::db_stat() {
+	std::string m;
+	std::string query = "select material, user, started, elapsed, completed, speed from game order by completed DESC;";
+	mysql_query(&mysql, query.c_str());
+
+	result = mysql_store_result(&mysql);
+	while ((row = mysql_fetch_row(result))) {
+			m += "<tr><td>" + std::string(row[0]) + "</td>";
+			m += "<td>" + std::string(row[1]) + "</td>";
+			m += "<td>" + std::string(row[2]) + "</td>";
+			m += "<td>" + std::string(row[3]) + "</td>";
+			m += "<td>" + std::string(row[4]) + "</td>";
+			m += "<td>" + std::string(row[5]) + "</td></tr>";
+	}
+
+	mysql_free_result(result);
+
+	return m;
 }

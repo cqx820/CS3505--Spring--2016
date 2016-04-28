@@ -134,7 +134,7 @@ struct client_report : public proto {
 		return packet << proto.code << proto.story << proto.user << proto.started << proto.elapsed << proto.completed << proto.difficulty;
 	}
 	friend sf::Packet & operator>>(sf::Packet& packet, client_report& proto) {
-		return packet >> proto.story >> proto.user >> proto.started >> proto.elapsed >> proto.completed >> proto.difficulty;;
+		return packet >> proto.story >> proto.user >> proto.started >> proto.elapsed >> proto.completed >> proto.difficulty;
 	}
 };
 

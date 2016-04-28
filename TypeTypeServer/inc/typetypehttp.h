@@ -13,10 +13,9 @@ class TypeTypeHttp {
 	sf::TcpListener *server;
 	sf::Thread *httpThread;
 
-	std::string html = "Hello World!";
-
 	void listen();
 	void poll();
+	std::string html();
 
 	bool live = true;
 public:

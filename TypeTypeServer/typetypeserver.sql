@@ -47,17 +47,15 @@ create table material(
 		
 create table game(
 	id int(50) not null auto_increment,
-	material int(20) not null,
-	user int(20) not null,
-	elapsed int(20) not null,
-	started int(20) not null,
+	material varchar(255) not null,
+	user varchar(255) not null,
+	elapsed int(32) not null,
+	started int(32) not null,
 	completed int(5),
 	correct int(5),
 	speed int(3),
 	score int(10),
-	PRIMARY KEY (id),
-	FOREIGN KEY (user) REFERENCES user(id),
-	FOREIGN KEY (material) REFERENCES material(id)
+	PRIMARY KEY (id)
 ) Engine = InnoDB;
 
 /*insert into user (nick, email, name, pass)

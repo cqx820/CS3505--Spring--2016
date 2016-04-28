@@ -30,8 +30,8 @@ public:
 	server_stories db_stories();
 	std::vector<std::string> db_story(server_story);
 	bool db_report(client_report);
+	std::string db_stat();
 	
-
 private:
 	void connect(const char*, const char*, const char*, const char*);
 	void query(const char*);

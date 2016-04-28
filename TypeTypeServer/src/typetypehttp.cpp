@@ -1,4 +1,5 @@
 #include "typetypehttp.h"
+#include "typetypedb.h"
 
 TypeTypeHttp::TypeTypeHttp() {
 	selector = new sf::SocketSelector;
@@ -30,10 +31,30 @@ void TypeTypeHttp::poll() {
 			if (selector->isReady(*server)) {
 				sf::TcpSocket client;
 				if (server->accept(client) == sf::Socket::Done) {
-					client.send(html.c_str(), html.length());
-					client.disconnect();
+					char in[1024];
+					std::size_t len;
+					if (client.receive(in, 1024, len) == sf::Socket::Done) {
+						std::string message = html();
+						client.send(message.c_str(), message.length());
+						client.disconnect();
+					}
 				}				
 			}
 		}
 	}
+}
+
+std::string TypeTypeHttp::html() {
+	TypeTypeDB db;
+	std::string m = "HTTP/1.1 200 OK\r\nConnection: close\r\nContent - Type: text / html; charset = UTF - 8\r\n\r\n";
+	m += "<html><head>";
+	m += "<title>TypeTypeRevolution</title></head>";
+	m += "<body>";
+	m += "<h1>TypeTypeRevolution Statistics</h1>";
+	m += "<table><thead>";
+	m += "<tr><th>Material</th><th>Nickname</th><th>Started</th><th>Elapsed</th><th>Completed</th></tr></thead>";
+	m += db.db_stat();
+	m += "</table>";
+	m += "</body></html>";
+	return m;
 }

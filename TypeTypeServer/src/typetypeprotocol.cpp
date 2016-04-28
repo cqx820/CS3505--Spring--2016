@@ -4,6 +4,7 @@
 
 #include <SFML/Network.hpp>
 #include <iostream>
+#include <fstream>
 
 void Protocol::registerc(Client *client, sf::Packet packet) {
 	client_register proto;
@@ -44,13 +45,33 @@ void Protocol::stories(Client *client) {
 }
 
 void Protocol::story(Client *client, sf::Packet packet) {
-	client_story proto;
-	packet >> proto;
+	server_story proto;
+
+	/*std::fstream fs;
+	fs.open ("material/story/Alice In Wonderland/Alice In Wonderland-001.txt", std::fstream::in);
+	std::string temp;
+	while (fs >> temp)
+		proto.content += temp + " ";	
+	*/
+
+	proto.content = "The quick brown fox jumps over the lazy dog";
+
+	sf::Packet out;
+	out << proto;
+	client->socket->send(out);
 }
 
 void Protocol::report(Client *client, sf::Packet packet) {
 	client_report proto;
 	packet >> proto;
+
+	TypeTypeDB db;
+	bool status = db.db_report(proto);
+
+	std::cout << "report: " << proto.user << " | " << status << std::endl;
+
+	Bool(client, status);
+
 }
 
 void Protocol::Bool(Client *client, bool status) {
