@@ -23,7 +23,7 @@ public:
     ~KeyboardHandler();
 
 signals:
-    void characterAttemptSuccess(bool isLastLetter);
+    void characterAttemptSuccess(bool isLastLetter, int toTypeIndex);
     void characterAttemptFailure();
 
 

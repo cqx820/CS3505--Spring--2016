@@ -35,6 +35,7 @@ public slots:
     void addEntity(Entity* entity,std::string name);
     void updateScore(int score);
     void toggleCrateColor(Entity*,bool);
+    void highlightText(Entity *entity, int index);
 
 private :
 

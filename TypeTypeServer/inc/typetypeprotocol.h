@@ -126,15 +126,12 @@ struct client_report : public proto {
 	const sf::Uint8 code = BYTE::CLIENT_REPORT;
 	std::string story;
 	std::string user;
-	sf::Uint32 started; //time
-	sf::Uint32 elapsed; //time
-	sf::Uint8 completed; //buckets
-	sf::Uint8 difficulty; // speed
+	sf::Uint8 score; // score
 	friend sf::Packet & operator<<(sf::Packet& packet, const client_report& proto) {
-		return packet << proto.code << proto.story << proto.user << proto.started << proto.elapsed << proto.completed << proto.difficulty;
+		return packet << proto.code << proto.story << proto.user << proto.score;
 	}
 	friend sf::Packet & operator>>(sf::Packet& packet, client_report& proto) {
-		return packet >> proto.story >> proto.user >> proto.started >> proto.elapsed >> proto.completed >> proto.difficulty;
+		return packet >> proto.story >> proto.user >> proto.score;
 	}
 };
 

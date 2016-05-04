@@ -27,8 +27,8 @@ public:
 
 	void kill();
 
-private:
 	bool live;
+private:
 
 	void broadcast(sf::Packet *);
 	void broadcast(char const *, size_t len);

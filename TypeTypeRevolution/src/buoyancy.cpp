@@ -9,13 +9,12 @@ Buoyancy::Buoyancy(MyContactListner *listner)
 }
 
 Buoyancy::~Buoyancy(){
-    delete listener;
+//    delete listener;
     delete logic;
 }
 
 //Code from iforce2d
 void Buoyancy::Step(){
-   // qDebug()<<"Called!!!";
     std::set<fixturePair>::iterator it = listener->m_fixturePairs.begin();
     std::set<fixturePair>::iterator end = listener->m_fixturePairs.end();
     while(it != end){

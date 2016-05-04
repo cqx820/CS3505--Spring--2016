@@ -15,6 +15,7 @@ class Client {
 public:
 	sf::TcpSocket *socket;
 	int id;
+	int story;
 	
 	std::queue<sf::Packet*> obuf;
 	std::queue<sf::Packet*> ibuf;

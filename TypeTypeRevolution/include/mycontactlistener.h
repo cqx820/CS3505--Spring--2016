@@ -11,7 +11,6 @@ class MyContactListner : public b2ContactListener
 public:
    // MyContactListner();
     void BeginContact(b2Contact *contact){
-           qDebug()<<"contacted"<<contact;
         b2Fixture *fixtureA = contact->GetFixtureA();
         b2Fixture *fixtureB = contact->GetFixtureB();
         if(fixtureA->IsSensor() && (fixtureB->GetBody()->GetType() == b2_dynamicBody)){

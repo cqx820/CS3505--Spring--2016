@@ -29,7 +29,7 @@ public:
     virtual QSize sizeHint() const;
 
 signals:
-    void characterSuccess(bool isLastLetter);
+    void characterSuccess(bool isLastLetter, int toTypeIndex);
     void characterFailure();
     void connectButtonPressed(QString URL, QString username, QString password,
                               bool isLogin, QString email, QString realName);
@@ -38,6 +38,7 @@ signals:
     void updateWorldSignal(b2World*);
     void addEntity(Entity*,std::string);
     void toggleCrateSignal(Entity*,bool);
+    void highlightTextOnCrate(Entity*,int);
 
     /**
      * Emitted after the popWord slot is called if there is a word to return
@@ -55,7 +56,6 @@ signals:
     void changeWPM(double);
     void updateScore(int);
     void toggleStartAbortButton();
-    void updateAvailableLessons(const std::vector<QString>&);
 
     /**
      * Emitted when the user presses okay on the choose lesson dialog or
@@ -63,6 +63,10 @@ signals:
      * of the lesson needing to be passed to the server
      */
     void chooseLessonConnectionInfo(const QString&);
+    /**
+     * Emitted to tell the GUI which titles the user can select from
+     */
+    void updateAvailableLessons(ChooseLessonDialog::lessonsArray);
 
 
 public slots:

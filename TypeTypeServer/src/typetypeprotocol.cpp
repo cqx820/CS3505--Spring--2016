@@ -45,17 +45,24 @@ void Protocol::stories(Client *client) {
 }
 
 void Protocol::story(Client *client, sf::Packet packet) {
+	if (!client->id)
+		return;
+	
 	server_story proto;
 
-	/*std::fstream fs;
-	fs.open ("material/story/Alice In Wonderland/Alice In Wonderland-001.txt", std::fstream::in);
+	if (!client->story) {
+		TypeTypeDB db;
+		client->story = db.db_next_story(client->id, 1);
+	}
+
+	std::fstream fs;
+	fs.open ("material/story/Alice In Wonderland/Alice In Wonderland-00" + std::to_string(client->story) + ".txt", std::fstream::in);
 	std::string temp;
 	while (fs >> temp)
 		proto.content += temp + " ";	
-	*/
-
-	proto.content = "The quick brown fox jumps over the lazy dog";
-
+	
+	std::cout << "story: " << client->id << " | " << client->story;
+	
 	sf::Packet out;
 	out << proto;
 	client->socket->send(out);
@@ -65,8 +72,10 @@ void Protocol::report(Client *client, sf::Packet packet) {
 	client_report proto;
 	packet >> proto;
 
+	client->story++;
+
 	TypeTypeDB db;
-	bool status = db.db_report(proto);
+	bool status = db.db_report(proto, client->id);
 
 	std::cout << "report: " << proto.user << " | " << status << std::endl;
 

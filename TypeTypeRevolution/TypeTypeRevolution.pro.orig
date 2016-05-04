@@ -25,6 +25,7 @@ CLASS += fallingcanvas
 CLASS += crate
 CLASS += entity
 CLASS += buoyancy
+CLASS += mycontactlistener
 CLASS += buoyancylogic
 CLASS += typetypemenu
 # CLASS += timecanvas
@@ -32,13 +33,15 @@ CLASS += keyboardhandler
 CLASS += chooselessondialog
 CLASS += serverconnectdialog
 CLASS += networkcontroller
+<<<<<<< HEAD
 CLASS += richtext
+=======
+INC += callbackfunctor
+
 CLASS += typetypecallbackserver
 
-INC += callbackfunctor
-INC += mycontactlistener
-
 LANGUAGES = de es fr zh
+>>>>>>> 9cf5719a76e8314b1476b78aff71fdb29cdde079
 
 SRC = typetypemain #ROSS DO NOT DO ANYTHING SILLY AND REMOVE THE MAIN AGAIN
 #lol

@@ -52,7 +52,7 @@ std::string TypeTypeHttp::html() {
 	m += "<body>";
 	m += "<h1>TypeTypeRevolution Statistics</h1>";
 	m += "<table><thead>";
-	m += "<tr><th>Material</th><th>Nickname</th><th>Started</th><th>Elapsed</th><th>Completed</th></tr></thead>";
+	m += "<tr><th>Material</th><th>Nickname</th><th></th></tr></thead>";
 	m += db.db_stat();
 	m += "</table>";
 	m += "</body></html>";

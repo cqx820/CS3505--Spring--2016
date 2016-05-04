@@ -2,13 +2,10 @@
 #include <QDebug>
 
 Entity::Entity(b2World *world){
-    this->texture = new sf::Texture;
     this->world = world;
-
 }
 
 void Entity::LoadCrate(int x,int y, int width, int height){
-    qDebug()<<Q_FUNC_INFO<<"Crate pos: "<<x<<","<<y;
     this->bodyDef = new b2BodyDef;
     this->bodyDef->type = b2_dynamicBody;
     this->bodyDef->position= b2Vec2(x, y);
@@ -45,10 +42,14 @@ void Entity::LoadWalls(int x, int y, int width, int height){
 
 
 Entity::~Entity(){
-    delete this->bodyDef;
-    if(fixtureDef!=NULL)
+    if(bodyDef!=NULL){
+        delete this->bodyDef;
+    }
+    if(fixtureDef!=NULL){
         delete this->fixtureDef;
-    if(polygon!=NULL)
+    }
+    if(polygon!=NULL){
         delete this->polygon;
+    }
 
 }

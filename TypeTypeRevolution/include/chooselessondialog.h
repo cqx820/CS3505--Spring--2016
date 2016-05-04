@@ -22,6 +22,13 @@ public:
     ~ChooseLessonDialog();
 
     /**
+     * When sending "complicated things" over thread boundries, special
+     * precautions have to be taken
+     * https://forum.qt.io/topic/2826/solved-cross-thread-signal-cannot-queue-arguments-of-type-qvector-qvector-int/2
+     */
+    typedef QVector<QString> lessonsArray;
+
+    /**
      * Return lastSelectedLesson
      */
     QString getCurrentlySelectedLesson();
@@ -43,7 +50,7 @@ public slots:
     /**
      * Deletes the current knowledge of lessions and adds the passed ones
      */
-    void updateAvailableLessons(const std::vector<QString>&);
+    void updateAvailableLessons(lessonsArray);
 
 protected:
     QString lastSelectedLesson;

@@ -6,7 +6,12 @@
 
 #include "typetypemenu.h"
 
+#include "typetypegui.h"
+
 TypeTypeMenu::TypeTypeMenu(QWidget *parent) : QMenuBar(parent) {
+
+    QString upgradeText(tr("Subscribe to the gold edition to unlock!"));
+
     //Constructing file menu
     fileMenu = new QMenu(tr("&File"));
 
@@ -67,6 +72,8 @@ TypeTypeMenu::TypeTypeMenu(QWidget *parent) : QMenuBar(parent) {
     connect(WPMCustom, &QAction::triggered,
             this, &TypeTypeMenu::WPMHandler);
     difficulty->addAction(WPMCustom);
+    WPMCustom->setDisabled(true);
+    WPMCustom->setToolTip(upgradeText);
 
     WPMMedium->trigger();
     //Finished constructing difficulty menu

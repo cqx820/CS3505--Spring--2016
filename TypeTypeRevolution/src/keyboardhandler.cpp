@@ -19,7 +19,7 @@ KeyboardHandler::~KeyboardHandler() {
 void KeyboardHandler::receiveWord(QString word) {
     currentWord = word;
     letterIndex = 0;
-    qDebug() << "[INFO] " << Q_FUNC_INFO << "received word: " << currentWord;
+    qDebug() << "[INFO] KeyboardHandler received word: " << currentWord;
 }
 
 void KeyboardHandler::receiveCharacterAttempt(QKeyEvent *event) {
@@ -31,11 +31,11 @@ void KeyboardHandler::receiveCharacterAttempt(QKeyEvent *event) {
         letterIndex++;
         bool isLastLetter = false;
         if (letterIndex >= currentWord.size()) {
-            qDebug() << Q_FUNC_INFO << "[INFO] finished word: " << currentWord;
+            qDebug() << "[INFO] finished word: " << currentWord;
             isLastLetter = true;
             currentWord = "";
         }
-        emit characterAttemptSuccess(isLastLetter);
+        emit characterAttemptSuccess(isLastLetter, letterIndex);
     } else {
         emit characterAttemptFailure();
     }

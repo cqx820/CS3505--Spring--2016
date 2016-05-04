@@ -44,6 +44,7 @@ bool TypeTypeDB::db_register(client_register proto) {
 	query = "insert into userinfo (played, wins, avg) values (0,0,0)";
 	mysql_query(&mysql, query.c_str());
 
+	query = "insert into user_story (story, completed) values (1,1)";
 	return true;
 }
 
@@ -54,7 +55,7 @@ int TypeTypeDB::db_login(client_login proto) {
 	result = mysql_store_result(&mysql);
 
 	int id = 0;
-	if (mysql_num_rows > 0) {
+	if (mysql_num_rows(result) > 0) {
 		row = mysql_fetch_row(result);
 		id = atoi(row[0]);
 	}
@@ -82,31 +83,52 @@ server_stories TypeTypeDB::db_stories() {
 
 }
 
-bool TypeTypeDB::db_report(client_report proto) {
-	std::string query = "insert into game (material, user, started, elapsed, completed, speed) values ('" + proto.story + "','" + proto.user + "','" + std::to_string((int)proto.started) + "','" + std::to_string((int)proto.elapsed) + "','" + std::to_string((int)proto.completed) + "','" + std::to_string((int)proto.difficulty) + "');";
+bool TypeTypeDB::db_report(client_report proto, int uid) {
+	std::string query = "insert into game (material, user, score) values ('" + proto.story + "','" + proto.user + "','" + std::to_string((int)proto.score) + "');";
 	std::cout << "query: " << query << std::endl;
-	if (!mysql_query(&mysql, query.c_str()))
-		return false;
+	mysql_query(&mysql, query.c_str());
+	
+	if (proto.story == "Alice In Wonderland") {
+		std::string query = "update user_story set completed = completed + 1 where user = " + std::to_string(uid) + " and story = 1;";
+		mysql_query(&mysql, query.c_str());
+	}
+
+	query = "update userinfo set played = played + 1 where user = " + std::to_string(uid) + ";";
+	mysql_query(&mysql, query.c_str());
 
 	return true;
 }
 
 std::string TypeTypeDB::db_stat() {
 	std::string m;
-	std::string query = "select material, user, started, elapsed, completed, speed from game order by completed DESC;";
+	std::string query = "select material, user, score from game order by score DESC;";
 	mysql_query(&mysql, query.c_str());
 
 	result = mysql_store_result(&mysql);
 	while ((row = mysql_fetch_row(result))) {
 			m += "<tr><td>" + std::string(row[0]) + "</td>";
 			m += "<td>" + std::string(row[1]) + "</td>";
-			m += "<td>" + std::string(row[2]) + "</td>";
-			m += "<td>" + std::string(row[3]) + "</td>";
-			m += "<td>" + std::string(row[4]) + "</td>";
-			m += "<td>" + std::string(row[5]) + "</td></tr>";
+			m += "<td>" + std::string(row[2]) + "</td></tr>";
 	}
 
 	mysql_free_result(result);
 
 	return m;
+}
+
+int TypeTypeDB::db_next_story(int uid, int story) {
+	std::string query = "select completed from user_story where user = " + std::to_string(uid) + " and story = " + std::to_string(story) + ";";
+	mysql_query(&mysql, query.c_str());
+
+	result = mysql_store_result(&mysql);
+
+	int id = 0;
+	if (mysql_num_rows(result) > 0) {
+		row = mysql_fetch_row(result);
+		id = atoi(row[0]);
+	}
+	
+	mysql_free_result(result);
+
+	return id;
 }

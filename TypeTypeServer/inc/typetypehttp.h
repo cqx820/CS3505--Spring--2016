@@ -17,10 +17,11 @@ class TypeTypeHttp {
 	void poll();
 	std::string html();
 
-	bool live = true;
 public:
 	TypeTypeHttp();
 	~TypeTypeHttp();
+	
+	bool live = true;
 };
 
 #endif

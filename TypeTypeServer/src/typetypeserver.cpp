@@ -163,7 +163,11 @@ int main(int argc, char **argv) {
 	TypeTypeServer tts;
 	TypeTypeHttp tthttp;
 
-	while (true) {}
+	std::string in;
+	std::cin >> in;
+
+	tts.live = false;
+	tthttp.live = false;
 
 	return 0;
 }

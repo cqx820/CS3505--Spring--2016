@@ -9,6 +9,7 @@
 #define TYPETYPECONTROLLER_H
 
 #include <SFML/Network.hpp>
+#include "networkcontroller.h"
 
 #include <QObject>
 #include <Box2D/Box2D.h>
@@ -22,6 +23,17 @@ class TypeTypeController : public QObject {
     Q_OBJECT
 public:
     const ushort PORT = 1337;
+    const sf::Uint8 RESPONSE_FAIL = 2;
+    const sf::Uint8 RESPONSE_SUCCESS = 1;
+
+    const sf::Uint8 HANDSHAKE_RESPONSE = 100;
+    const sf::Uint8 REGISTER_REQUEST = 101;
+    const sf::Uint8 LOGIN_REQUEST = 102;
+    const sf::Uint8 TITLES_RESPONSE = 200;
+    const sf::Uint8 TITLES_REQUEST = 201;
+    const sf::Uint8 STORY_REQUEST = 202;
+    const sf::Uint8 REPORT_STORY = 203;
+    const sf::Uint8 STORY_RESPONSE = 204;
 
     explicit TypeTypeController(TypeTypeGUI*, QObject *parent = 0);
     ~TypeTypeController();
@@ -37,9 +49,15 @@ signals:
     void updateScore(int score);
     void toggleStartAbortButton();
     void toggleCrateSignal(Entity*,bool);
+    //todo:connect
+    void highlightCrateText(Entity*,int);
+    /**
+     * Emitted to tell the GUI which titles the user can select from
+     */
+    void updateAvailableLessons(const ChooseLessonDialog::lessonsArray&);
 
 public slots:
-    void characterSuccess(bool isLastLetter);
+    void characterSuccess(bool isLastLetter, int toTypeIndex);
     void characterFailure();
     /**
      * Makes the specified server connection. Emits connectionFailed if
@@ -50,7 +68,7 @@ public slots:
                                      QString email, QString realName);
     void updateWorld();
     void receivePoppedWord(QString word);
-    void wordTyped(QString word);
+    void wordTyped();
     void outOfWordsHandler();
 
     /**
@@ -61,6 +79,12 @@ public slots:
 
 
 protected:
+    //Networking Data Members
+    NetworkState *state = Q_NULLPTR;
+    QString username;
+    QString lastTitle;
+    uint32 timeStarted;
+    //End Networking Data Members
 
     b2World *world;
     QTimer box2DTimer;
@@ -73,7 +97,8 @@ protected:
      */
     double WPM = 60;
     TypeTypeGUI *gui;
-    void getNextWord();
+    void getNextWord(int index);
+    void skipWord();
 
     /**
      * Sets the timer which causes a word to be popped to have the interval
@@ -99,6 +124,29 @@ protected:
     void abortButtonHandler();
     //End GUI handlers
 
+    //Network handlers
+    /**
+     * Disconnects the socket and cleans it up
+     */
+    void disconnectSocket();
+
+    /**
+     * Called after the first connection and checks for server acknowlegement
+     */
+    void handshakeCallback(NetworkState* state);
+
+    /**
+     * Called after we request the list of titles from the server
+     */
+    void titlesListCallback(NetworkState* state);
+
+    /**
+     * Called after we request a story
+     */
+    void storyRequestCallback(NetworkState* state);
+
+    //End Network handlers
+
     int seaWidth;
     int seaHeight;
     int seaPosX;
@@ -106,17 +154,15 @@ protected:
     int gravity;
     std::map<int,Entity*> crateMap;
     std::map<int,QString> wordMap;
-    sf::TcpSocket socket;
-    sf::Socket::Status connectionStatus = sf::Socket::Disconnected;
 
 private:
-    //I'm going into model territory here...
-    // todo: come to a consensus on where this should be
     QStringList storedLesson;
     int score = 0;
-    int currentIndex = 0;
+    int currentListIndex = 0;
     int wordIndex=0;
     Entity* ship;
+    Entity* sea;
+    bool keyboardIsWaitingForWord = true;
 
 };
 

@@ -7,6 +7,7 @@
 #include "typetypegui.h"
 
 #include <QBoxLayout>
+#include <QDebug>
 #include <QSizePolicy>
 #include <QStatusBar>
 
@@ -51,6 +52,7 @@ TypeTypeGUI::TypeTypeGUI(QWidget *parent)
     connect(this,&TypeTypeGUI::addEntity,canvas,&FallingCanvas::addEntity);
     connect(this,&TypeTypeGUI::updateScore,canvas,&FallingCanvas::updateScore);
     connect(this,&TypeTypeGUI::toggleCrateSignal,canvas,&FallingCanvas::toggleCrateColor);
+    connect(this,&TypeTypeGUI::highlightTextOnCrate,canvas,&FallingCanvas::highlightText);
     centralWidget->setLayout(layout);
     this->setCentralWidget(centralWidget);
 
@@ -77,10 +79,12 @@ TypeTypeGUI::TypeTypeGUI(QWidget *parent)
     lessonChooser = new ChooseLessonDialog();
     connect(this, &TypeTypeGUI::updateAvailableLessons,
             lessonChooser, &ChooseLessonDialog::updateAvailableLessons);
+    /*
     std::vector<QString> testLessons;
     //I will hardcode some lessons "for now"
     testLessons.push_back(QString("Alice In Wonderland"));
     emit updateAvailableLessons(testLessons);
+    */
     connect(lessonChooser, &ChooseLessonDialog::chooseLessonConnectionInfo,
             this, &TypeTypeGUI::chooseLessonConnectionInfo);
 
@@ -110,6 +114,9 @@ TypeTypeGUI::TypeTypeGUI(QWidget *parent)
     this->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
     this->setFocusPolicy(Qt::StrongFocus);
     this->setFocus(Qt::ActiveWindowFocusReason);
+
+    // Register our special type so we can send it accross thread boundries
+    qRegisterMetaType<ChooseLessonDialog::lessonsArray>("ChooseLessonDialog::lessonsArray");
 }
 
 TypeTypeGUI::~TypeTypeGUI() {
@@ -142,7 +149,7 @@ void TypeTypeGUI::connectionSuccessHandler(QString infoMessage) {
 
 void TypeTypeGUI::setLesson(const QString &lesson) {
     lessonBox->setPlainText(lesson);
-    lessonChooser->show();
+    //lessonChooser->show();
 }
 
 void TypeTypeGUI::setFullscreen(bool checked) {

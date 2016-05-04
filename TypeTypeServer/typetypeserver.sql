@@ -35,25 +35,15 @@ create table user_story(
 	FOREIGN KEY (story) REFERENCES story(id)
 ) Engine = InnoDB;
 	
-create table material(
-	id int(50) not null auto_increment,
-	story int(20),
-	name varchar(255) not null,
-	file varchar(255) not null,
-	level int(10),
-	PRIMARY KEY (id),
-	FOREIGN KEY (story) REFERENCES story(id)
-) Engine = InnoDB;
-		
 create table game(
 	id int(50) not null auto_increment,
 	material varchar(255) not null,
 	user varchar(255) not null,
-	elapsed int(32) not null,
+	/*elapsed int(32) not null,
 	started int(32) not null,
 	completed int(5),
 	correct int(5),
-	speed int(3),
+	speed int(3),*/
 	score int(10),
 	PRIMARY KEY (id)
 ) Engine = InnoDB;
@@ -64,4 +54,4 @@ insert into userinfo (played, wins, avg)
 	values (0,0,100);*/
 
 insert into story(name, parts)
-	values ("Alice In Wonderland", 3);
+	values ("Alice In Wonderland", 139);

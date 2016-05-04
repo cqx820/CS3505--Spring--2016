@@ -13,7 +13,8 @@ public:
     void LoadCrate( int x, int y,int width, int height);
     void LoadWalls(int x, int y,int width, int height);
     b2Body *body;
-    bool crateTyped=true;
+    bool crateTyped=false;
+    bool notSkipped = true;
    // void destroy();
     ~Entity();
 protected:
@@ -22,7 +23,6 @@ protected:
     b2PolygonShape *polygon=NULL;
     b2FixtureDef *fixtureDef=NULL;
 private:
-    sf::Texture *texture=NULL;
 
 };
 

@@ -29,8 +29,9 @@ public:
 	int db_login(client_login);
 	server_stories db_stories();
 	std::vector<std::string> db_story(server_story);
-	bool db_report(client_report);
+	bool db_report(client_report, int);
 	std::string db_stat();
+	int db_next_story(int, int);
 	
 private:
 	void connect(const char*, const char*, const char*, const char*);

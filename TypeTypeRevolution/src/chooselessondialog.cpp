@@ -12,6 +12,7 @@
 
 
 ChooseLessonDialog::ChooseLessonDialog(QWidget *parent) : QWidget(parent) {
+
     layout = new QVBoxLayout(this);
 
     this->setLayout(layout);
@@ -60,11 +61,33 @@ ChooseLessonDialog::~ChooseLessonDialog() {
     delete layout;
     layout = Q_NULLPTR;
 
+    delete storyModeButton;
+    storyModeButton=Q_NULLPTR;
+
+    delete lessonModeButton;
+    lessonModeButton=Q_NULLPTR;
+
+    delete randomModeButton;
+    randomModeButton=Q_NULLPTR;
+
+    delete modeSelectionLayout;
+    modeSelectionLayout=Q_NULLPTR;
+
+    delete availableLessonLayout;
+    availableLessonLayout=Q_NULLPTR;
+
     delete modeSelection;
     modeSelection = Q_NULLPTR;
 
     delete okButton;
     okButton = Q_NULLPTR;
+
+    delete availableLessons;
+    availableLessons=Q_NULLPTR;
+
+    delete okButton;
+    okButton=Q_NULLPTR;
+
 }
 
 QString ChooseLessonDialog::getCurrentlySelectedLesson() {
@@ -72,10 +95,10 @@ QString ChooseLessonDialog::getCurrentlySelectedLesson() {
 }
 
 QString ChooseLessonDialog::getNextLessonInStory() {
-
+    return lastSelectedLesson;
 }
 
-void ChooseLessonDialog::updateAvailableLessons(const std::vector<QString>& newLessons) {
+void ChooseLessonDialog::updateAvailableLessons(lessonsArray newLessons) {
     for (QRadioButton* button : lessonButtons) {
         disconnect(button, &QPushButton::pressed,
                    this, &ChooseLessonDialog::lessonButtonHandler);
@@ -93,11 +116,13 @@ void ChooseLessonDialog::updateAvailableLessons(const std::vector<QString>& newL
 }
 
 QString ChooseLessonDialog::convertTitleToChapterName(QString title) {
+    /*
     title.replace(" ", "_");
     title.append("-");
     title.append(
                 QString::number(lessonPart).rightJustified(3, '0'));
     title.append(".txt");
+    */
     return title;
 }
 

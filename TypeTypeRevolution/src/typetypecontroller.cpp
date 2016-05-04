@@ -7,6 +7,8 @@
 #include "typetypecontroller.h"
 
 #include <SFML/Network.hpp>
+#include "networkcontroller.h"
+#include "callbackfunctor.h"
 
 #include <QDir>
 #include <QDebug>
@@ -18,6 +20,7 @@ TypeTypeController::TypeTypeController(TypeTypeGUI *gui, QObject *parent)
     seaPosX=0;
     seaPosY=-600;
     gravity=-10;
+
     connect(this, &TypeTypeController::newLesson,
             gui, &TypeTypeGUI::setLesson);
     connect(this, &TypeTypeController::sendWord,
@@ -28,6 +31,9 @@ TypeTypeController::TypeTypeController(TypeTypeGUI *gui, QObject *parent)
             gui, &TypeTypeGUI::connectionFailedHandler);
     connect(this, &TypeTypeController::sendInformationToUser,
             gui, &TypeTypeGUI::connectionSuccessHandler);
+    connect(this, &TypeTypeController::updateAvailableLessons,
+            gui, &TypeTypeGUI::updateAvailableLessons);
+
     connect(gui, &TypeTypeGUI::poppedWord,
             this, &TypeTypeController::receivePoppedWord);
     connect(gui, &TypeTypeGUI::outOfWords,
@@ -66,12 +72,13 @@ TypeTypeController::TypeTypeController(TypeTypeGUI *gui, QObject *parent)
     connect(this,&TypeTypeController::updateWorldSignal,gui,&TypeTypeGUI::updateWorldSignal);
     connect(this,&TypeTypeController::updateScore,gui,&TypeTypeGUI::updateScore);
     connect(this,&TypeTypeController::toggleCrateSignal,gui,&TypeTypeGUI::toggleCrateSignal);
+    connect(this,&TypeTypeController::highlightCrateText,gui,&TypeTypeGUI::highlightTextOnCrate);
     box2DTimer.start();
 
 
-    Entity* entity= new Entity(world);
-    entity->LoadWalls(seaPosX,seaPosY,seaWidth,seaHeight);
-    emit addEntity(entity,"crate");
+    sea= new Entity(world);
+    sea->LoadWalls(seaPosX,seaPosY,seaWidth,seaHeight);
+    emit addEntity(sea,"");
     ship = new Entity(world);
     ship->LoadCrate(seaWidth*.5,seaPosY*.8,seaWidth/4,33);
     ship->body->SetGravityScale(1);
@@ -79,20 +86,39 @@ TypeTypeController::TypeTypeController(TypeTypeGUI *gui, QObject *parent)
     emit updateWorldSignal(world);
     world->SetContactListener(listner);
     thisBuoyancy = new Buoyancy(listner);
+
+    // Register our special type so we can send it accross thread boundries
+    qRegisterMetaType<ChooseLessonDialog::lessonsArray>("ChooseLessonDialog::lessonsArray");
+}
+
+TypeTypeController::~TypeTypeController() {
+    for(auto it:crateMap){
+        delete it.second;
+    }
+    delete listner;
+    delete sea;
+    delete ship;
+    if (state != Q_NULLPTR) {
+        delete state;
+        state = Q_NULLPTR;
+    }
+    delete gui;
+    delete world;
+    delete thisBuoyancy;
 }
 
 void TypeTypeController::updateWorld(){
-    if(ship->body->GetPosition().y<seaPosY*.75){
-        qDebug()<<"Called !!!!!!!!!!!!!!!!!!!!!!!!!!";
+    auto shipPos=ship->body->GetPosition().y;
+    if(shipPos<seaPosY*.75){
         ship->body->ApplyForce(b2Vec2(0,ship->body->GetMass() * 10),ship->body->GetWorldCenter(),true);
     }
 
     for (auto it = crateMap.begin(); it != crateMap.end();){
         Entity* crate=it->second;
 
-        if (crate->body->GetPosition().y<seaPosY*.4)
+        if (crate->body->GetPosition().y<seaPosY*.5)
         {
-            emit toggleCrateSignal(crate,true);
+            //emit toggleCrateSignal(crate,true);
             if(crate->crateTyped){
                 crate->body->ApplyForce(b2Vec2(0,crate->body->GetMass() * -10),crate->body->GetWorldCenter(),true);
             }
@@ -102,6 +128,13 @@ void TypeTypeController::updateWorld(){
 //                crate->body->SetLinearVelocity(vel);
                 crate->body->ApplyForce(b2Vec2(0,crate->body->GetMass() * -20),crate->body->GetWorldCenter(),true);
                 crate->body->ApplyForce(b2Vec2(crate->body->GetMass() * -50,0),crate->body->GetWorldCenter(),true);
+
+                //Cutoff point for typing the crate.
+                //Only skip if the crate hasn't been marked as such yet
+                if(crate->notSkipped){
+                    crate->notSkipped = false;
+                    skipWord();
+                }
             }
 
         }
@@ -127,87 +160,153 @@ void TypeTypeController::receivePoppedWord(QString word) {
         //String is empty or all white space. Move along. Nothing to see.
         return;
     }
-    //qDebug() << Q_FUNC_INFO << "word reached";
     wordMap[wordIndex]=word;
     Entity* entity= new Entity(world);
     entity->LoadCrate(rand()%((int)(seaWidth*.8))+seaWidth/25,0,seaWidth/40,seaWidth/40);
     crateMap[wordIndex++]=entity;
     emit addEntity(entity,word.toStdString());
+
+    if(keyboardIsWaitingForWord && currentListIndex < crateMap.size()) {
+        //for the case where the user is typing faster than words are appearing
+        //remove the flag
+        keyboardIsWaitingForWord = false;
+
+        getNextWord(currentListIndex);
+
+        auto nextCrate = crateMap.find(currentListIndex);
+        emit toggleCrateSignal(nextCrate->second, true);
+    }
+}
+
+void TypeTypeController::characterSuccess(bool isLastLetter, int toTypeIndex) {
+    score++;
+    auto crate = crateMap.find(currentListIndex);
+    emit highlightCrateText(crate->second, toTypeIndex);
+
+    if (isLastLetter) {
+        score += 10;
+
+        crate->second->crateTyped = true;
+        emit toggleCrateSignal(crate->second, false);
+
+        currentListIndex++;
+        //If the word typed is the last one in the queue, set
+        // keyboardIsWaitingForWord, and let wordPoppedHandler take care of
+        // getting the next word as well as crate highlighting
+        if (currentListIndex >= wordIndex) {
+            keyboardIsWaitingForWord = true;
+            return;
+        }
+
+        getNextWord(currentListIndex);
+
+        if (currentListIndex < crateMap.size()) {
+            auto nextCrate = crateMap.find(currentListIndex);
+            emit toggleCrateSignal(nextCrate->second, true);
+        }
+    }
+}
+
+void TypeTypeController::skipWord() {
+    qDebug() << "[INFO] skipped word: " << storedLesson.at(currentListIndex);
+
+    score -= 10;
+
+    auto crate = crateMap.find(currentListIndex);
+    emit highlightCrateText(crate->second, 0);
+    emit toggleCrateSignal(crate->second, false);
+
+    currentListIndex++;
+    //If the word typed is the last one in the queue, set
+    // keyboardIsWaitingForWord, and let wordPoppedHandler take care of
+    // getting the next word as well as crate highlighting
+    if (currentListIndex >= wordIndex) {
+        keyboardIsWaitingForWord = true;
+        return;
+    }
+
+    getNextWord(currentListIndex);
+
+    if (currentListIndex < crateMap.size()) {
+        auto nextCrate = crateMap.find(currentListIndex);
+        emit toggleCrateSignal(nextCrate->second, true);
+    }
+}
+
+void TypeTypeController::getNextWord(int index) {
+    if (index >= storedLesson.size()) {
+        emit sendWord("");
+        sf::Packet toSend;
+        toSend << REPORT_STORY
+               << lastTitle.toStdString()
+               << username.toStdString()
+               << (sf::Int32)score;
+        NetworkController::send(state, toSend);
+        return;
+        //todo: implement end of lesson behavior
+    }
+    emit sendWord(storedLesson.at(index));
 }
 
 void TypeTypeController::outOfWordsHandler() {
+    /*
+    toSend << REPORT_STORY
+           << lastTitle.toStdString() //std::string Storyname
+           << username.toStdString()//std::string Username
+           << timeStarted //Uint32 timeStarted
+           << ((uint32)time(NULL) - timeStarted) //Uint32 timeElapsed
+           << (sf::Uint8)100 //Uint8 %complete
+           << (sf::Uint8)WPM; //Uint8 difficulty
+    */
     emit toggleStartAbortButton();
 }
 
-void TypeTypeController::wordTyped(QString word){
-    int key = 0;
-      for (auto i = wordMap.begin(); i != wordMap.end();) {
-         if (i->second==word) {
-            key = i->first;
-            wordMap.erase(i++);
-            break;
-         }
-      }
-
-      auto it= crateMap.find(key);
+void TypeTypeController::wordTyped(){
+      auto it= crateMap.find(currentListIndex - 1);
       it->second->crateTyped=true;
-
-
 }
 
 void TypeTypeController::chooseLessonConnectionInfoHandler(const QString& info) {
-    //TODO: Make this method use the network, etc.
-    QString lesson = "This is some text with a few words.";
-    lesson += "\n";
-    lesson += info;
-    storedLesson = lesson.split(" ", QString::SkipEmptyParts);
-    emit newLesson(lesson);
-    emit sendWord(storedLesson.at(currentIndex));
+    if (state == Q_NULLPTR) {
+        emit sendErrorToUser(tr("Not connected to a server!"));
+        return;
+    }
+    lastTitle = info;
+    sf::Packet toSend;
+    toSend << STORY_REQUEST << info.toStdString();
+
+    NetworkController::send(state, toSend);
+
+    CallbackFunctor<TypeTypeController> callback(
+                &TypeTypeController::storyRequestCallback, this);
+    state->callback = callback;
+    NetworkController::requestMoreData(state);
 }
 
 void TypeTypeController::setWPMTimer(double WPM) {
     //60,000 ms per minute
     wordPopTimer.setInterval((int) (60000 / WPM));
-
-    if (currentIndex >= storedLesson.size()) {
-        emit sendWord("");
-    } else {
-        emit sendWord(storedLesson[currentIndex]);
-    }
-
 }
 
 void TypeTypeController::wordPopTimerHandler() {
     emit popNextWord(QRegularExpression("\\s"));
 }
 
-void TypeTypeController::characterSuccess(bool isLastLetter) {
-    score++;
-    if (isLastLetter) {
-        score += 10;
-        getNextWord();
-    }
-}
-
-void TypeTypeController::getNextWord() {
-    if (currentIndex == storedLesson.size() - 1) {
-        return;
-        //todo: implement end of lesson behavior
-    }
-    emit sendWord(storedLesson.at(++currentIndex));
-}
-
 void TypeTypeController::startButtonHandler() {
     wordPopTimer.start();
+    timeStarted = time(NULL);
 }
 
 void TypeTypeController::abortButtonHandler() {
     //This should probably do something like clear the word box, but eh.
+    emit newLesson("");
     wordPopTimer.stop();
 }
 
 void TypeTypeController::characterFailure() {
-    score--;
+    if(currentListIndex < storedLesson.size()) {
+        score--;
+    }
 }
 
 void TypeTypeController::connectButtonPressedHandler(QString URL,
@@ -219,35 +318,125 @@ void TypeTypeController::connectButtonPressedHandler(QString URL,
         emit sendErrorToUser(tr("Connection failed: Invalid hostname or IP"));
         return;
     }
+    state = NetworkController::connectToServer(remoteIP, PORT);
+    /*
     //Check if the socket is already connected. Connect if not.
     if (connectionStatus != sf::Socket::Done) {
         connectionStatus = socket.connect(URL.toStdString(), PORT);
     }
+    */
     //Check that the connection was successful
-    if (connectionStatus != sf::Socket::Done){
+    if (state->SFMLStatus != sf::Socket::Done){
         //TODO: Figure out error handling for sockets
         emit sendErrorToUser(tr("Connection Failed after DNS resolution"));
     } else {
         emit sendInformationToUser(tr("Successfully connected to ") + URL);
         sf::Packet data;
         if (isLogin) {
-            data << uint8(102)
+            data << LOGIN_REQUEST
                  << username.toStdString()
                  << password.toStdString();
         } else { //Register user
-            data << uint8(101)
+            data << REGISTER_REQUEST
                  << username.toStdString()
                  << email.toStdString()
                  << realName.toStdString()
                  << password.toStdString();
         }
-        socket.send(data);
+        NetworkController::send(state, data);
     }
+    this->username = username;
+    CallbackFunctor<TypeTypeController> callback(
+                &TypeTypeController::handshakeCallback, this);
+    state->callback = callback;
+    NetworkController::requestMoreData(state);
 }
 
-TypeTypeController::~TypeTypeController() {
-    delete gui;
-    delete world;
-    delete thisBuoyancy;
+void TypeTypeController::disconnectSocket() {
+    state->socket.disconnect();
+    delete state;
+    state = Q_NULLPTR;
+}
+
+void TypeTypeController::handshakeCallback(NetworkState *state) {
+    if (state->SFMLStatus == sf::Socket::Disconnected) {
+        emit sendErrorToUser(tr("Handshake error: The remote closed the connection"));
+        delete state;
+        state = Q_NULLPTR;
+        return;
+    }
+    uint8_t packetCode;
+    sf::Uint8 result;
+    state->data >> packetCode >> result;
+    if (packetCode != HANDSHAKE_RESPONSE) {
+        sendErrorToUser(tr("Server replied to login handshake with invalid"
+                           "packet code"));
+        disconnectSocket();
+        return;
+    } else if (result == RESPONSE_SUCCESS) {
+        emit sendInformationToUser(tr("Handshake: Login accepted"));
+        sf::Packet requestTitlesPacket;
+        requestTitlesPacket << TITLES_REQUEST;
+        NetworkController::send(state, requestTitlesPacket);
+        CallbackFunctor<TypeTypeController> callback(
+                    &TypeTypeController::titlesListCallback, this);
+        state->callback = callback;
+        NetworkController::requestMoreData(state);
+    } else {
+        emit sendErrorToUser(tr("Login failed"));
+        state->socket.disconnect();
+        disconnectSocket();
+        return;
+    }
+    qDebug() << "[NET]  packet code: " << packetCode <<  ", result: " << result;
+}
+
+void TypeTypeController::titlesListCallback(NetworkState *state) {
+    uint8_t packetCode;
+
+    state->data >> packetCode;
+
+    if (packetCode != TITLES_RESPONSE){
+        emit sendErrorToUser(tr("Invalid response to titles list request"));
+        disconnectSocket();
+        return;
+    }
+
+    QVector<QString> titles;
+    sf::Uint8 numberOfStories;
+    state->data >> numberOfStories;
+    std::string title;
+    while (state->data >> title) {
+        titles.push_back(QString::fromStdString(title));
+        qDebug() << "[NET]  packet code: " << packetCode << ", result: "
+            << QString::fromStdString(title);
+    }
+    emit updateAvailableLessons(titles);
+}
+
+void TypeTypeController::storyRequestCallback(NetworkState *state) {
+    uint8_t packetCode;
+
+    state->data >> packetCode;
+
+    if (packetCode != STORY_RESPONSE){
+        emit sendErrorToUser(tr("Invalid response to story request"));
+        disconnectSocket();
+        return;
+    }
+
+    std::string story;
+    if (!(state->data >> story)) {
+        emit sendErrorToUser(tr("No story received!"));
+    }
+
+    QString lesson;
+    /*lesson += "This is some text with a few words. "
+            "This line should be removed. It is in the storyRequestCallback"
+            "method of TypeTypeController.";
+    lesson += "\n";*/
+    lesson += QString::fromStdString(story);
+    storedLesson = lesson.split(" ", QString::SkipEmptyParts);
+    emit newLesson(lesson);
 }
 
